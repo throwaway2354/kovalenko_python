@@ -1,26 +1,35 @@
 from collections import deque
 
 d = deque()
+s = set()
 
-try:
-    while True:
-        try:
-            instruction, *value = input().strip()
-        except:
-            break
-        card = ''.join(value).strip()
-        if instruction == '^':
-            d.popleft()
-        if instruction == '/':
-            d.pop()
-        if instruction == '+':
-            d.appendleft(card)
-        if instruction == '#':
-            d.append(card)
-except Exception:
-    print('ERROR')
-else:
-    if not d:
-        print('EMPTY')
+with open('output.txt', 'w') as f, open('input.txt', 'r') as fin:
+    try:
+        for line in fin:
+            instruction, *value = line.strip()
+            card = ''.join(value)
+            if instruction == '^':
+                card = d.popleft()
+                s.remove(card)
+                continue
+            if instruction == '/':
+                card = d.pop()
+                s.remove(card)
+                continue
+            if card in s:
+                raise Exception()
+            s.add(card)
+            if instruction == '+':
+                d.appendleft(card)
+                continue
+            if instruction == '#':
+                d.append(card)
+                continue
+            raise Exception()
+    except Exception:
+        f.write('ERROR')
     else:
-        print(*d)
+        if not d:
+            f.write('EMPTY')
+        else:
+            f.write(' '.join(d))
